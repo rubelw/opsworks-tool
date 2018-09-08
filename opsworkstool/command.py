@@ -25,7 +25,7 @@ opsworkstool deploy. The opsworks has been started in template.json.
 
 
 @click.group()
-@click.version_option(version='0.0.2')
+@click.version_option(version='0.0.3')
 def cli():
     pass
 
