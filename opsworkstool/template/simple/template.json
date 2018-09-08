@@ -1,0 +1,150 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09", 
+    "Description": "Opsworks Stack",
+    "Parameters": {
+        "SubnetId": {
+            "Description": "default subnet",
+            "Type": "String"
+        }, 
+        "RecipeS3Url": {
+            "Description": "recipe url", 
+            "Type": "String"
+        }, 
+        "KeyName": {
+            "Description": "key pair", 
+            "Type": "String"
+        }, 
+        "OpsworksDefaultProfile": {
+            "Description": "opsworks default profile", 
+            "Type": "String"
+        }, 
+        "OpsworksServiceRole": {
+            "Description": "opsworks service role", 
+            "Type": "String"
+        }, 
+        "InstanceProfile": {
+            "Description": "Instance profile", 
+            "Type": "String"
+        },
+        "SubnetCIDR": {
+            "Description": "Subnet CIDR", 
+            "Type": "String"
+        }, 
+        "VPCId": {
+            "Description": "The Id of the target VPC for this stack. ",
+            "Type": "AWS::EC2::VPC::Id", 
+            "ConstraintDescription": "must be a valid VPC ID"
+        }, 
+        "OpsWorksStackColor": {
+            "Description": "RGB Color to use for OpsWorks Stack", 
+            "Type": "String", 
+            "Default": "rgb(45, 114, 184)"
+        }, 
+        "DefaultAvailabilityZone": {
+            "Description": "Default availability zone for stack", 
+            "Type": "String"
+        },
+        "StackName":{
+            "Type":"String"
+        },
+        "SecurityGroup":{
+            "Type":"String"
+        },
+        "InstanceType":{
+            "Type":"String"
+        }
+    }, 
+    "Resources": {
+        "Stack": {
+            "Type": "AWS::OpsWorks::Stack", 
+            "Properties": {
+                "Name": { "Ref":"StackName"},
+                "ServiceRoleArn": {
+                    "Ref": "OpsworksServiceRole"
+                }, 
+                "Attributes": {
+                    "Color": {
+                        "Ref": "OpsWorksStackColor"
+                    }
+                }, 
+                "ConfigurationManager": {
+                    "Name": "Chef", 
+                    "Version": "12"
+                }, 
+                "UseCustomCookbooks": "true", 
+                "CustomCookbooksSource": {
+                    "Type": "s3", 
+                    "Url": {
+                        "Ref": "RecipeS3Url"
+                    }
+                }, 
+                "DefaultInstanceProfileArn": {
+                    "Ref": "OpsworksDefaultProfile"
+                }, 
+                "DefaultAvailabilityZone": {
+                    "Ref": "DefaultAvailabilityZone"
+                }, 
+                "DefaultSshKeyName": {
+                    "Ref": "KeyName"
+                }, 
+                "VpcId": {
+                    "Ref": "VPCId"
+                }, 
+                "DefaultSubnetId": {
+                    "Ref": "SubnetId"
+                }, 
+                "DefaultOs": "Amazon Linux 2017.09",
+            }
+        }, 
+        "Layer": {
+            "Type": "AWS::OpsWorks::Layer", 
+            "DependsOn": [
+                "Stack"
+            ], 
+            "Properties": {
+                "EnableAutoHealing": "true", 
+                "AutoAssignElasticIps": "true", 
+                "AutoAssignPublicIps": "true", 
+                "CustomSecurityGroupIds": [
+                    {
+                        "Ref": "SecurityGroup"
+                    }
+                ], 
+                "StackId": {
+                    "Ref": "Stack"
+                }, 
+                "CustomRecipes": {
+                    "Setup": [
+                        "stack::setup"
+                    ], 
+                    "Configure": [], 
+                    "Deploy": [], 
+                    "Undeploy": [], 
+                    "Shutdown": []
+                }, 
+                "Type": "custom", 
+                "Shortname": "layer",
+                "Name": "layer"
+            }
+        }, 
+        "Instance": {
+            "Type": "AWS::OpsWorks::Instance", 
+            "Properties": {
+                "StackId": {
+                    "Ref": "Stack"
+                }, 
+                "LayerIds": [
+                    {
+                        "Ref": "Layer"
+                    }
+                ], 
+                "InstanceType": {"Ref":"InstanceType"},
+                "SshKeyName": {
+                    "Ref": "KeyName"
+                }, 
+                "RootDeviceType": "ebs", 
+                "Os": "Amazon Linux 2017.09"
+            }
+        }
+    }
+}
