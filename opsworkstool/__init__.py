@@ -3,7 +3,7 @@ from opsworkstool.opsworks_deployer import OpsworksDeployer #noqa
 from datetime import datetime
 
 __title__ = 'opsworkstool'
-__version__ = '0.5.0'
+__version__ = '0.0.1'
 __author__ = 'Will Rubel'
 __author_email__ = 'willrubel@gmail.com'
 __license__ = '''MIT License

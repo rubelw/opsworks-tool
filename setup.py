@@ -19,10 +19,10 @@ def find_data(starting_dir, the_dir):
 
 setup(
     name='OpsworksTool',
-    version='0.5.0',
+    version='0.0.1',
     packages=['opsworkstool'],
     description='Python Opsworks utility',
-    author='Chuck Muckamuck',
+    author='Will Rubel',
     author_email='willrubel@gmail.com',
     include_package_data=True,
     package_data={'opsworkstool': find_data('opsworkstool', 'template')},
