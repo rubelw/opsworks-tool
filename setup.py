@@ -2,6 +2,18 @@ from setuptools import setup
 import os
 
 
+
+
+DESCRIPTION = ("Creates opsworks template and deploys it.")
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    LONG_DESCRIPTION = f.read()
+
+
+VERSION = '0.0.2'
+
+
+
 def find_data(starting_dir, the_dir):
     original_cwd = os.getcwd()
     tree = []
@@ -21,7 +33,8 @@ setup(
     name='OpsworksTool',
     version='0.0.1',
     packages=['opsworkstool'],
-    description='Python Opsworks utility',
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type='text/markdown',
     author='Will Rubel',
     author_email='willrubel@gmail.com',
     include_package_data=True,
